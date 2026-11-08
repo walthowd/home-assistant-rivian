@@ -291,7 +291,8 @@ These need only the signed-in account, not a paired phone key.
 
 | Action                 | Description                                                                         |
 | ---------------------- | ----------------------------------------------------------------------------------- |
-| `rivian.send_location` | Send a location (`latitude`, `longitude`) to a vehicle's navigation, which starts navigating there |
+| `rivian.search_places` | Search for places like the Rivian app (`query`, from the vehicle's location); returns `results` (`place_id`, `name`, `address`, `latitude`, `longitude`, `drive_distance` in m, `drive_duration` in s), or type-ahead `predictions` with `autocomplete` |
+| `rivian.send_location` | Send a location (`latitude`, `longitude`, optionally a search result's `place_id`, `name` and `address`, so the vehicle shows its name) to a vehicle's navigation, which starts navigating there |
 | `rivian.send_trip`     | Send stops to a vehicle's navigation, which plans the route and charging stops (optional `min_arrival_charge`, `charging_networks`) |
 | `rivian.end_trip`      | End the trip a vehicle is navigating |
 
