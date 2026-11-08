@@ -1058,6 +1058,9 @@
       "climate_hold": {
         "name": "Climate hold"
       },
+      "defrost_defog": {
+        "name": "Defrost/defog"
+      },
       "gear_guard_video": {
         "name": "Gear Guard video"
       },
