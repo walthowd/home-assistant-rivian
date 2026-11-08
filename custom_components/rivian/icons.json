@@ -461,5 +461,10 @@
                 "default": "mdi:clock-end"
             }
         }
+    },
+    "services": {
+        "send_location": {
+            "service": "mdi:map-marker-path"
+        }
     }
 }
