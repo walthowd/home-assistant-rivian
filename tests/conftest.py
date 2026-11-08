@@ -860,6 +860,14 @@ def _setup_mock_environment() -> None:
         rivian_mod.utils = utils_submod  # type: ignore[attr-defined]
         sys.modules["rivian.utils"] = utils_submod
 
+        # services.py validates charging network names against the library's
+        rivian_submod = DynamicModule("rivian.rivian", is_package=False)
+        rivian_submod.CHARGING_NETWORKS = dict.fromkeys(  # type: ignore[attr-defined]
+            ("rivian", "chargepoint", "electrify_america", "ev_connect", "evgo"),
+            (),
+        ) | dict.fromkeys(("flo", "shell_recharge", "tesla", "ionna"), ())
+        sys.modules["rivian.rivian"] = rivian_submod
+
         # coordinator.py imports the Parallax decoder; tests patch it as needed
         parallax_submod = DynamicModule("rivian.parallax", is_package=False)
         parallax_submod.decode_parallax_message = MagicMock(return_value=None)  # type: ignore[attr-defined]

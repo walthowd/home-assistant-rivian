@@ -465,6 +465,12 @@
     "services": {
         "send_location": {
             "service": "mdi:map-marker-path"
+        },
+        "send_trip": {
+            "service": "mdi:map-marker-multiple"
+        },
+        "end_trip": {
+            "service": "mdi:map-marker-off"
         }
     }
 }
