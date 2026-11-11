@@ -440,6 +440,9 @@
             "climate_hold": {
                 "default": "mdi:thermometer-auto"
             },
+            "defrost_defog": {
+                "default": "mdi:car-defrost-front"
+            },
             "gear_guard_video": {
                 "default": "mdi:cctv"
             },
