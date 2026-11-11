@@ -209,6 +209,7 @@ def _setup_mock_environment() -> None:
         class Platform(StrEnum):
             BINARY_SENSOR = "binary_sensor"
             BUTTON = "button"
+            CAMERA = "camera"
             CLIMATE = "climate"
             COVER = "cover"
             DEVICE_TRACKER = "device_tracker"
@@ -680,6 +681,7 @@ def _setup_mock_environment() -> None:
         descs: dict[str, type] = {
             "binary_sensor": BinarySensorEntityDescription,
             "button": ButtonEntityDescription,
+            "camera": EntityDescription,
             "climate": EntityDescription,
             "cover": CoverEntityDescription,
             "device_tracker": EntityDescription,
@@ -710,6 +712,7 @@ def _setup_mock_environment() -> None:
             submod.SensorStateClass = DynamicEnum  # type: ignore[attr-defined]
             sys.modules[f"homeassistant.components.{comp_name}"] = submod
             setattr(comp_mod, comp_name, submod)
+        sys.modules["homeassistant.components.camera"].CameraEntityFeature = DynamicEnum  # type: ignore[attr-defined]
 
         # cover: the feature flags RivianCoverEntity combines at import
         class CoverEntityFeature(IntFlag):
