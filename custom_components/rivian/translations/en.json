@@ -1108,5 +1108,33 @@
         }
       }
     }
+  },
+  "services": {
+    "send_location": {
+      "name": "Send location",
+      "description": "Sends a location to the vehicle's navigation. The vehicle wakes if needed and starts navigating there.",
+      "fields": {
+        "device_id": {
+          "name": "Vehicle",
+          "description": "The vehicle to send the location to."
+        },
+        "latitude": {
+          "name": "Latitude",
+          "description": "Latitude of the location."
+        },
+        "longitude": {
+          "name": "Longitude",
+          "description": "Longitude of the location."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_device": {
+      "message": "{device_id} is not a Rivian vehicle"
+    },
+    "location_rejected": {
+      "message": "The vehicle didn't accept the location"
+    }
   }
 }

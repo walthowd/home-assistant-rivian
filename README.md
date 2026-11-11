@@ -284,6 +284,14 @@ These controls need a phone key paired over Bluetooth (see [Remote Vehicle Contr
 | Wake                       | Button  | Wake vehicle                                                                                                                                             |
 | Windows                    | Cover   | Vent/close all windows                                                                                                                                   |
 
+### Actions
+
+These need only the signed-in account, not a paired phone key.
+
+| Action                 | Description                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `rivian.send_location` | Send a location (`latitude`, `longitude`) to a vehicle's navigation, which starts navigating there |
+
 ## Special Thanks
 
 - [jrgutier](https://github.com/jrgutier) - Helped with getting information on the Rivian API

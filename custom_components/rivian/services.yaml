@@ -1,0 +1,24 @@
+send_location:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: rivian
+          entity:
+            - domain: device_tracker
+    latitude:
+      required: true
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: any
+    longitude:
+      required: true
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: any
