@@ -153,3 +153,94 @@ def test_charging_networks_are_validated() -> None:
     assert networks("tesla") == ["tesla"]
     with pytest.raises(vol.Invalid):
         networks(["ea"])
+
+
+PLACE = {
+    "id": "place_id",
+    "name": "REI",
+    "location": {
+        "formattedAddress": "5901 Mills Civic Pkwy, West Des Moines, IA",
+        "coordinate": {"latitude": 41.56028, "longitude": -93.78724},
+        "navCoordinate": {"latitude": 41.56001, "longitude": -93.78730},
+    },
+    "driveDetails": {"driveDistance": 239062, "driveDuration": 9960},
+}
+
+
+def search_call(**data: object) -> tuple[MagicMock, SimpleNamespace, MagicMock]:
+    """A search_places call from a vehicle at 40.1, -92.5."""
+    service_call, _, registry = call()
+    coor = service_call.hass.data[DOMAIN]["entry"][ATTR_COORDINATOR][ATTR_VEHICLE][
+        "vehicle"
+    ]
+    coor.data = {"gnssLocation": {"latitude": 40.1, "longitude": -92.5}}
+    coor.api.search_places = AsyncMock(return_value=[PLACE] * 3)
+    coor.api.suggest_places = AsyncMock(return_value=["restaurants"])
+    service_call.data = {
+        "device_id": "device",
+        "query": "REI",
+        "max_results": 2,
+        "autocomplete": False,
+    } | data
+    return service_call, coor, registry
+
+
+async def test_search_places() -> None:
+    """Results come from the vehicle's location, trimmed, at their entrances."""
+    service_call, coor, registry = search_call()
+    with patch.object(services.dr, "async_get", return_value=registry):
+        response = await services._search_places(service_call)
+        coor.api.search_places.assert_awaited_once_with("REI", 40.1, -92.5)
+        service_call.data |= {"latitude": 1.0, "longitude": 2.0}
+        await services._search_places(service_call)
+        assert coor.api.search_places.await_args.args[1:] == (1.0, 2.0)
+    assert response == {
+        "predictions": [],
+        "results": [
+            {
+                "place_id": "place_id",
+                "name": "REI",
+                "address": "5901 Mills Civic Pkwy, West Des Moines, IA",
+                "latitude": 41.56001,
+                "longitude": -93.78730,
+                "drive_distance": 239062,
+                "drive_duration": 9960,
+            }
+        ]
+        * 2,
+    }
+
+
+async def test_search_places_suggestions() -> None:
+    """With autocomplete, suggested search texts come back instead of places."""
+    service_call, coor, registry = search_call(query="RE", autocomplete=True)
+    with patch.object(services.dr, "async_get", return_value=registry):
+        response = await services._search_places(service_call)
+    assert response == {"predictions": ["restaurants"], "results": []}
+    coor.api.search_places.assert_not_awaited()
+
+
+async def test_search_places_fails() -> None:
+    """No vehicle position, or a failed search, fails the action."""
+    service_call, coor, registry = search_call()
+    with patch.object(services.dr, "async_get", return_value=registry):
+        coor.data = {}
+        with pytest.raises(HomeAssistantError):
+            await services._search_places(service_call)
+        coor.data = {"gnssLocation": {"latitude": 40.1, "longitude": -92.5}}
+        coor.api.search_places.side_effect = services.RivianApiException("bad")
+        with pytest.raises(HomeAssistantError):
+            await services._search_places(service_call)
+
+
+async def test_send_location_by_place() -> None:
+    """With a place id, the app's place link is sent so the vehicle shows its name."""
+    service_call, share, registry = call()
+    service_call.data |= {"place_id": "place_id", "name": "REI", "address": "1 Main"}
+    with (
+        patch.object(services.dr, "async_get", return_value=registry),
+        patch.object(services, "place_url", return_value="link") as link,
+    ):
+        await services._send_location(service_call)
+    link.assert_called_once_with("place_id", "REI", 39.05, -94.48, "1 Main")
+    share.assert_awaited_once_with("vehicle", "link")

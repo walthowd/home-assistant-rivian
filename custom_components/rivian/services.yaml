@@ -22,6 +22,53 @@ send_location:
           min: -180
           max: 180
           step: any
+    place_id:
+      selector:
+        text:
+    name:
+      selector:
+        text:
+    address:
+      selector:
+        text:
+
+search_places:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: rivian
+          entity:
+            - domain: device_tracker
+    query:
+      required: true
+      example: REI
+      selector:
+        text:
+    latitude:
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: any
+    longitude:
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: any
+    max_results:
+      default: 8
+      selector:
+        number:
+          min: 1
+          max: 20
+    autocomplete:
+      default: false
+      selector:
+        boolean:
 
 send_trip:
   fields:
