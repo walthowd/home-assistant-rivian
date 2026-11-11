@@ -291,6 +291,8 @@ These need only the signed-in account, not a paired phone key.
 | Action                 | Description                                                                         |
 | ---------------------- | ----------------------------------------------------------------------------------- |
 | `rivian.send_location` | Send a location (`latitude`, `longitude`) to a vehicle's navigation, which starts navigating there |
+| `rivian.send_trip`     | Send stops to a vehicle's navigation, which plans the route and charging stops (optional `min_arrival_charge`, `charging_networks`) |
+| `rivian.end_trip`      | End the trip a vehicle is navigating |
 
 ## Special Thanks
 

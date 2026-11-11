@@ -22,3 +22,72 @@ send_location:
           min: -180
           max: 180
           step: any
+
+send_trip:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: rivian
+          entity:
+            - domain: device_tracker
+    stops:
+      required: true
+      selector:
+        object:
+          multiple: true
+          label_field: name
+          fields:
+            name:
+              required: true
+              selector:
+                text:
+            latitude:
+              required: true
+              selector:
+                number:
+                  min: -90
+                  max: 90
+                  step: any
+            longitude:
+              required: true
+              selector:
+                number:
+                  min: -180
+                  max: 180
+                  step: any
+    min_arrival_charge:
+      default: 20
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    charging_networks:
+      selector:
+        select:
+          multiple: true
+          translation_key: charging_network
+          options:
+            - rivian
+            - chargepoint
+            - electrify_america
+            - ev_connect
+            - evgo
+            - flo
+            - shell_recharge
+            - tesla
+            - ionna
+
+end_trip:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: rivian
+          entity:
+            - domain: device_tracker
