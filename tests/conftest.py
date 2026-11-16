@@ -46,6 +46,17 @@ class DynamicEnum(metaclass=DynamicEnumMeta):
     """Base dynamic class for device and state classes."""
 
 
+class VehicleCommandMeta(type):
+    """Metaclass that provides attributes as their own names, like a StrEnum."""
+
+    def __getattr__(cls, name: str) -> str:
+        return name
+
+
+class VehicleCommandMock(metaclass=VehicleCommandMeta):
+    """Stands in for the VehicleCommand StrEnum, whose members equal their names."""
+
+
 class DynamicModule(types.ModuleType):
     """Module type that returns MagicMock or classes for undefined attributes."""
 
@@ -717,6 +728,21 @@ def _setup_mock_environment() -> None:
 
         comp_mod.cover.CoverEntityFeature = CoverEntityFeature  # type: ignore[attr-defined]
 
+        class ClimateEntityFeature(IntFlag):
+            TARGET_TEMPERATURE = 1
+            PRESET_MODE = 16
+            TURN_OFF = 128
+            TURN_ON = 256
+
+        class HVACMode(StrEnum):
+            OFF = "off"
+            HEAT = "heat"
+            HEAT_COOL = "heat_cool"
+
+        climate_mod = sys.modules["homeassistant.components.climate"]
+        climate_mod.ClimateEntityFeature = ClimateEntityFeature  # type: ignore[attr-defined]
+        climate_mod.HVACMode = HVACMode  # type: ignore[attr-defined]
+
         # homeassistant.components.websocket_api: backs websocket_api.py
         # (registered from __init__.py). No test in this suite exercises the
         # WebSocket command handler itself; this only needs to import and
@@ -842,7 +868,7 @@ def _setup_mock_environment() -> None:
     if "rivian" not in sys.modules:
         rivian_mod = DynamicModule("rivian", is_package=True)
         rivian_mod.Rivian = SubscriptableMock  # type: ignore[attr-defined]
-        rivian_mod.VehicleCommand = SubscriptableMock  # type: ignore[attr-defined]
+        rivian_mod.VehicleCommand = VehicleCommandMock  # type: ignore[attr-defined]
         exc_submod = DynamicExceptionModule("rivian.exceptions", is_package=False)
         rivian_mod.exceptions = exc_submod  # type: ignore[attr-defined]
         sys.modules["rivian"] = rivian_mod
