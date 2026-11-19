@@ -506,6 +506,9 @@
         },
         "end_trip": {
             "service": "mdi:map-marker-off"
+        },
+        "search_places": {
+            "service": "mdi:map-search"
         }
     }
 }
