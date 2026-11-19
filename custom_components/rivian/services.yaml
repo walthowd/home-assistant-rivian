@@ -201,3 +201,34 @@ send_location:
       selector:
         location:
           radius: false
+
+send_trip:
+  fields:
+    device_id: *device_id
+    stops:
+      required: true
+      selector:
+        object:
+          multiple: true
+          label_field: name
+          fields:
+            name:
+              required: true
+              selector:
+                text:
+            location:
+              required: true
+              selector:
+                location:
+                  radius: false
+    min_arrival_charge:
+      default: 20
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+
+end_trip:
+  fields:
+    device_id: *device_id
